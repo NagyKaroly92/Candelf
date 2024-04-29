@@ -1,0 +1,12 @@
+D:\CandelfShop\DAL\DAL\bin\Release\net8.0\DAL.deps.json
+D:\CandelfShop\DAL\DAL\bin\Release\net8.0\DAL.dll
+D:\CandelfShop\DAL\DAL\bin\Release\net8.0\DAL.pdb
+D:\CandelfShop\DAL\DAL\obj\Release\net8.0\DAL.csproj.AssemblyReference.cache
+D:\CandelfShop\DAL\DAL\obj\Release\net8.0\DAL.GeneratedMSBuildEditorConfig.editorconfig
+D:\CandelfShop\DAL\DAL\obj\Release\net8.0\DAL.AssemblyInfoInputs.cache
+D:\CandelfShop\DAL\DAL\obj\Release\net8.0\DAL.AssemblyInfo.cs
+D:\CandelfShop\DAL\DAL\obj\Release\net8.0\DAL.csproj.CoreCompileInputs.cache
+D:\CandelfShop\DAL\DAL\obj\Release\net8.0\DAL.dll
+D:\CandelfShop\DAL\DAL\obj\Release\net8.0\refint\DAL.dll
+D:\CandelfShop\DAL\DAL\obj\Release\net8.0\DAL.pdb
+D:\CandelfShop\DAL\DAL\obj\Release\net8.0\ref\DAL.dll
