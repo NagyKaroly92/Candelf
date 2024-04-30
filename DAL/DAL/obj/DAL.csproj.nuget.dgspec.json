@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\CandelfShop\\DAL\\DAL\\DAL.csproj": {}
+    "D:\\Git\\Candelf2\\DAL\\DAL\\DAL.csproj": {}
   },
   "projects": {
-    "D:\\CandelfShop\\DAL\\DAL\\DAL.csproj": {
+    "D:\\Git\\Candelf2\\DAL\\DAL\\DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\CandelfShop\\DAL\\DAL\\DAL.csproj",
+        "projectUniqueName": "D:\\Git\\Candelf2\\DAL\\DAL\\DAL.csproj",
         "projectName": "DAL",
-        "projectPath": "D:\\CandelfShop\\DAL\\DAL\\DAL.csproj",
+        "projectPath": "D:\\Git\\Candelf2\\DAL\\DAL\\DAL.csproj",
         "packagesPath": "C:\\Users\\KA-DELL\\.nuget\\packages\\",
-        "outputPath": "D:\\CandelfShop\\DAL\\DAL\\obj\\",
+        "outputPath": "D:\\Git\\Candelf2\\DAL\\DAL\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

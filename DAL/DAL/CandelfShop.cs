@@ -39,9 +39,12 @@ namespace DAL
     public interface IMyDbContext : IDisposable
     {
         DbSet<Alapanyag> Alapanyags { get; set; } // Alapanyag
+        DbSet<Cikk> Cikks { get; set; } // Cikk
         DbSet<Illat> Illats { get; set; } // Illat
+        DbSet<Keszlet> Keszlets { get; set; } // Keszlet
         DbSet<MennyisegiEgyseg> MennyisegiEgysegs { get; set; } // MennyisegiEgyseg
         DbSet<Meret> Merets { get; set; } // Meret
+        DbSet<Recept> Recepts { get; set; } // Recept
 
         int SaveChanges();
         int SaveChanges(bool acceptAllChangesOnSuccess);
@@ -108,9 +111,12 @@ namespace DAL
         }
 
         public DbSet<Alapanyag> Alapanyags { get; set; } // Alapanyag
+        public DbSet<Cikk> Cikks { get; set; } // Cikk
         public DbSet<Illat> Illats { get; set; } // Illat
+        public DbSet<Keszlet> Keszlets { get; set; } // Keszlet
         public DbSet<MennyisegiEgyseg> MennyisegiEgysegs { get; set; } // MennyisegiEgyseg
         public DbSet<Meret> Merets { get; set; } // Meret
+        public DbSet<Recept> Recepts { get; set; } // Recept
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -134,9 +140,12 @@ namespace DAL
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new AlapanyagConfiguration());
+            modelBuilder.ApplyConfiguration(new CikkConfiguration());
             modelBuilder.ApplyConfiguration(new IllatConfiguration());
+            modelBuilder.ApplyConfiguration(new KeszletConfiguration());
             modelBuilder.ApplyConfiguration(new MennyisegiEgysegConfiguration());
             modelBuilder.ApplyConfiguration(new MeretConfiguration());
+            modelBuilder.ApplyConfiguration(new ReceptConfiguration());
         }
 
     }
@@ -164,18 +173,24 @@ namespace DAL
     public class FakeMyDbContext : IMyDbContext
     {
         public DbSet<Alapanyag> Alapanyags { get; set; } // Alapanyag
+        public DbSet<Cikk> Cikks { get; set; } // Cikk
         public DbSet<Illat> Illats { get; set; } // Illat
+        public DbSet<Keszlet> Keszlets { get; set; } // Keszlet
         public DbSet<MennyisegiEgyseg> MennyisegiEgysegs { get; set; } // MennyisegiEgyseg
         public DbSet<Meret> Merets { get; set; } // Meret
+        public DbSet<Recept> Recepts { get; set; } // Recept
 
         public FakeMyDbContext()
         {
             _database = new FakeDatabaseFacade(new MyDbContext());
 
             Alapanyags = new FakeDbSet<Alapanyag>("Id");
+            Cikks = new FakeDbSet<Cikk>("Id");
             Illats = new FakeDbSet<Illat>("Id");
+            Keszlets = new FakeDbSet<Keszlet>("CikkId");
             MennyisegiEgysegs = new FakeDbSet<MennyisegiEgyseg>("Id");
             Merets = new FakeDbSet<Meret>("Id");
+            Recepts = new FakeDbSet<Recept>("CikkId", "AlapanyagId", "MennyisegiEgysegId", "Mennyiseg");
 
         }
 
@@ -863,6 +878,13 @@ namespace DAL
         public int MennyisegiEgysegId { get; set; } // MennyisegiEgysegId
         public bool Torolt { get; set; } // Torolt
 
+        // Reverse navigation
+
+        /// <summary>
+        /// Child Recepts where [Recept].[AlapanyagId] point to this entity (FK_Recept_Alapanyag)
+        /// </summary>
+        public ICollection<Recept> Recepts { get; set; } // Recept.FK_Recept_Alapanyag
+
         // Foreign keys
 
         /// <summary>
@@ -878,6 +900,41 @@ namespace DAL
         public Alapanyag()
         {
             Torolt = false;
+            Recepts = new List<Recept>();
+        }
+    }
+
+    // Cikk
+    public class Cikk
+    {
+        public int Id { get; set; } // Id (Primary key)
+        public string Megnevezes { get; set; } // Megnevezes (length: 50)
+        public int MeretId { get; set; } // MeretId
+        public bool Torolt { get; set; } // Torolt
+
+        // Reverse navigation
+
+        /// <summary>
+        /// Child Recepts where [Recept].[CikkId] point to this entity (FK_Recept_Cikk)
+        /// </summary>
+        public ICollection<Recept> Recepts { get; set; } // Recept.FK_Recept_Cikk
+
+        /// <summary>
+        /// Parent (One-to-One) Cikk pointed by [Keszlet].[CikkId] (FK_Keszlet_Cikk)
+        /// </summary>
+        public Keszlet Keszlet { get; set; } // Keszlet.FK_Keszlet_Cikk
+
+        // Foreign keys
+
+        /// <summary>
+        /// Parent Meret pointed by [Cikk].([MeretId]) (FK_Cikk_Meret)
+        /// </summary>
+        public Meret Meret { get; set; } // FK_Cikk_Meret
+
+        public Cikk()
+        {
+            Torolt = false;
+            Recepts = new List<Recept>();
         }
     }
 
@@ -902,6 +959,25 @@ namespace DAL
         }
     }
 
+    // Keszlet
+    public class Keszlet
+    {
+        public int CikkId { get; set; } // CikkId (Primary key)
+        public int Mennyiseg { get; set; } // Mennyiseg
+
+        // Foreign keys
+
+        /// <summary>
+        /// Parent Cikk pointed by [Keszlet].([CikkId]) (FK_Keszlet_Cikk)
+        /// </summary>
+        public Cikk Cikk { get; set; } // FK_Keszlet_Cikk
+
+        public Keszlet()
+        {
+            Mennyiseg = 0;
+        }
+    }
+
     // MennyisegiEgyseg
     public class MennyisegiEgyseg
     {
@@ -916,10 +992,16 @@ namespace DAL
         /// </summary>
         public ICollection<Alapanyag> Alapanyags { get; set; } // Alapanyag.FK_Table.Alapanyag_Table.MennyisegiEgyseg
 
+        /// <summary>
+        /// Child Recepts where [Recept].[MennyisegiEgysegId] point to this entity (FK_Recept_MennyisegiEgyseg)
+        /// </summary>
+        public ICollection<Recept> Recepts { get; set; } // Recept.FK_Recept_MennyisegiEgyseg
+
         public MennyisegiEgyseg()
         {
             Torolt = false;
             Alapanyags = new List<Alapanyag>();
+            Recepts = new List<Recept>();
         }
     }
 
@@ -930,10 +1012,44 @@ namespace DAL
         public string Megnevezes { get; set; } // Megnevezes (length: 50)
         public bool Torolt { get; set; } // Torolt
 
+        // Reverse navigation
+
+        /// <summary>
+        /// Child Cikks where [Cikk].[MeretId] point to this entity (FK_Cikk_Meret)
+        /// </summary>
+        public ICollection<Cikk> Cikks { get; set; } // Cikk.FK_Cikk_Meret
+
         public Meret()
         {
             Torolt = false;
+            Cikks = new List<Cikk>();
         }
+    }
+
+    // Recept
+    public class Recept
+    {
+        public int CikkId { get; set; } // CikkId (Primary key)
+        public int AlapanyagId { get; set; } // AlapanyagId (Primary key)
+        public int MennyisegiEgysegId { get; set; } // MennyisegiEgysegId (Primary key)
+        public int Mennyiseg { get; set; } // Mennyiseg (Primary key)
+
+        // Foreign keys
+
+        /// <summary>
+        /// Parent Alapanyag pointed by [Recept].([AlapanyagId]) (FK_Recept_Alapanyag)
+        /// </summary>
+        public Alapanyag Alapanyag { get; set; } // FK_Recept_Alapanyag
+
+        /// <summary>
+        /// Parent Cikk pointed by [Recept].([CikkId]) (FK_Recept_Cikk)
+        /// </summary>
+        public Cikk Cikk { get; set; } // FK_Recept_Cikk
+
+        /// <summary>
+        /// Parent MennyisegiEgyseg pointed by [Recept].([MennyisegiEgysegId]) (FK_Recept_MennyisegiEgyseg)
+        /// </summary>
+        public MennyisegiEgyseg MennyisegiEgyseg { get; set; } // FK_Recept_MennyisegiEgyseg
     }
 
 
@@ -965,6 +1081,24 @@ namespace DAL
         }
     }
 
+    // Cikk
+    public class CikkConfiguration : IEntityTypeConfiguration<Cikk>
+    {
+        public void Configure(EntityTypeBuilder<Cikk> builder)
+        {
+            builder.ToTable("Cikk", "dbo");
+            builder.HasKey(x => x.Id).HasName("PK_Cikk").IsClustered();
+
+            builder.Property(x => x.Id).HasColumnName(@"Id").HasColumnType("int").IsRequired().ValueGeneratedOnAdd().UseIdentityColumn();
+            builder.Property(x => x.Megnevezes).HasColumnName(@"Megnevezes").HasColumnType("varchar(50)").IsRequired().IsUnicode(false).HasMaxLength(50);
+            builder.Property(x => x.MeretId).HasColumnName(@"MeretId").HasColumnType("int").IsRequired();
+            builder.Property(x => x.Torolt).HasColumnName(@"Torolt").HasColumnType("bit").IsRequired();
+
+            // Foreign keys
+            builder.HasOne(a => a.Meret).WithMany(b => b.Cikks).HasForeignKey(c => c.MeretId).OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Cikk_Meret");
+        }
+    }
+
     // Illat
     public class IllatConfiguration : IEntityTypeConfiguration<Illat>
     {
@@ -976,6 +1110,22 @@ namespace DAL
             builder.Property(x => x.Id).HasColumnName(@"ID").HasColumnType("int").IsRequired().ValueGeneratedOnAdd().UseIdentityColumn();
             builder.Property(x => x.Megnevezes).HasColumnName(@"Megnevezes").HasColumnType("varchar(50)").IsRequired().IsUnicode(false).HasMaxLength(50);
             builder.Property(x => x.Torolt).HasColumnName(@"Torolt").HasColumnType("bit").IsRequired();
+        }
+    }
+
+    // Keszlet
+    public class KeszletConfiguration : IEntityTypeConfiguration<Keszlet>
+    {
+        public void Configure(EntityTypeBuilder<Keszlet> builder)
+        {
+            builder.ToTable("Keszlet", "dbo");
+            builder.HasKey(x => x.CikkId).HasName("PK_Keszlet").IsClustered();
+
+            builder.Property(x => x.CikkId).HasColumnName(@"CikkId").HasColumnType("int").IsRequired().ValueGeneratedNever();
+            builder.Property(x => x.Mennyiseg).HasColumnName(@"Mennyiseg").HasColumnType("int").IsRequired();
+
+            // Foreign keys
+            builder.HasOne(a => a.Cikk).WithOne(b => b.Keszlet).HasForeignKey<Keszlet>(c => c.CikkId).OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Keszlet_Cikk");
         }
     }
 
@@ -1004,6 +1154,26 @@ namespace DAL
             builder.Property(x => x.Id).HasColumnName(@"ID").HasColumnType("int").IsRequired().ValueGeneratedOnAdd().UseIdentityColumn();
             builder.Property(x => x.Megnevezes).HasColumnName(@"Megnevezes").HasColumnType("varchar(50)").IsRequired().IsUnicode(false).HasMaxLength(50);
             builder.Property(x => x.Torolt).HasColumnName(@"Torolt").HasColumnType("bit").IsRequired();
+        }
+    }
+
+    // Recept
+    public class ReceptConfiguration : IEntityTypeConfiguration<Recept>
+    {
+        public void Configure(EntityTypeBuilder<Recept> builder)
+        {
+            builder.ToTable("Recept", "dbo");
+            builder.HasKey(x => new { x.CikkId, x.AlapanyagId, x.MennyisegiEgysegId, x.Mennyiseg });
+
+            builder.Property(x => x.CikkId).HasColumnName(@"CikkId").HasColumnType("int").IsRequired().ValueGeneratedNever();
+            builder.Property(x => x.AlapanyagId).HasColumnName(@"AlapanyagId").HasColumnType("int").IsRequired().ValueGeneratedNever();
+            builder.Property(x => x.MennyisegiEgysegId).HasColumnName(@"MennyisegiEgysegId").HasColumnType("int").IsRequired().ValueGeneratedNever();
+            builder.Property(x => x.Mennyiseg).HasColumnName(@"Mennyiseg").HasColumnType("int").IsRequired().ValueGeneratedNever();
+
+            // Foreign keys
+            builder.HasOne(a => a.Alapanyag).WithMany(b => b.Recepts).HasForeignKey(c => c.AlapanyagId).OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Recept_Alapanyag");
+            builder.HasOne(a => a.Cikk).WithMany(b => b.Recepts).HasForeignKey(c => c.CikkId).OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Recept_Cikk");
+            builder.HasOne(a => a.MennyisegiEgyseg).WithMany(b => b.Recepts).HasForeignKey(c => c.MennyisegiEgysegId).OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Recept_MennyisegiEgyseg");
         }
     }
 
