@@ -14,3 +14,9 @@
 /DAL/DAL/obj
 /TestApp/bin
 /TestApp/.vs
+/Candelf/Candelf/obj
+/Candelf/Candelf/obj
+Candelf/Candelf/obj/project.nuget.cache
+Candelf/Candelf/obj/project.assets.json
+Candelf/Candelf/obj/Candelf.csproj.nuget.g.props
+Candelf/Candelf/obj/Candelf.csproj.nuget.dgspec.json
