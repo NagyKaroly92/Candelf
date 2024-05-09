@@ -20,7 +20,7 @@ namespace ServiceLayer
         CompositeType GetDataUsingDataContract(CompositeType composite);
 
         [OperationContract]
-        void AddFixture()
+        void AddFixture();
 
         // TODO: Add your service operations here
     }
