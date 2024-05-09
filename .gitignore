@@ -14,3 +14,8 @@
 /DAL/DAL/obj
 /TestApp/bin
 /TestApp/.vs
+/ServiceLayer/.vs
+/ServiceLayer/ServiceLayer/obj
+/BusinessLayer/BusinessLayer/obj
+/Candelf/Candelf/obj
+/Candelf/Candelf/obj
